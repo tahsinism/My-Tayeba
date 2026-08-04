@@ -6,7 +6,7 @@
  * ================================================================
  */
 
-document.addEventListener('DOMContentLoaded', () => {
+function initApp() {
   // --------------------------------------------------------------
   // 1. STATE & CONSTANTS
   // --------------------------------------------------------------
@@ -588,4 +588,10 @@ document.addEventListener('DOMContentLoaded', () => {
     playPopSound(300);
     successModal.classList.remove('active');
   });
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initApp);
+} else {
+  initApp();
+}
