@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Tayeba, Will You Go Out With Me? 💖 - Kawaii Proposal</title>
+  
+  <!-- Favicon & Stylesheet -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💖</text></svg>" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+
+  <!-- Particle & Cursor Trail Canvases -->
+  <canvas id="cursor-canvas"></canvas>
+  <canvas id="particle-canvas"></canvas>
+
+  <!-- Parallax Background Layer -->
+  <div class="background-container" id="bg-container">
+    
+    <!-- Parallax Clouds -->
+    <div class="parallax-layer" data-speed="1">
+      <div class="cloud cloud-1"></div>
+      <div class="cloud cloud-2"></div>
+      <div class="cloud cloud-3"></div>
+    </div>
+
+    <!-- Parallax City & Hills Silhouette -->
+    <div class="parallax-layer" data-speed="2">
+      <div class="bg-skyline"></div>
+      <div class="bg-hills"></div>
+    </div>
+
+    <!-- Floating Sparkles & Hearts in BG -->
+    <div class="parallax-layer" data-speed="3">
+      <span class="floating-item" style="top: 18%; left: 12%; font-size: 22px;">✨</span>
+      <span class="floating-item" style="top: 25%; right: 15%; font-size: 26px;">🌸</span>
+      <span class="floating-item" style="top: 65%; left: 8%; font-size: 20px;">💖</span>
+      <span class="floating-item" style="top: 70%; right: 12%; font-size: 24px;">✨</span>
+      <span class="floating-item" style="top: 40%; left: 85%; font-size: 18px;">🦋</span>
+      <span class="floating-item" style="top: 15%; left: 75%; font-size: 22px;">⭐</span>
+    </div>
+
+  </div>
+
+  <!-- Top Navigation & Nintendo DS Status HUD -->
+  <header class="top-hud">
+    <div class="hud-left">
+      <div class="ds-badge" id="ds-status">
+        <span class="heart-icon">💖</span>
+        <span>MY HEART TAYEBA</span>
+      </div>
+    </div>
+    <div class="hud-right">
+      <button class="audio-btn" id="audio-btn" aria-label="Toggle Lo-Fi Music">
+        <span class="music-note">🎵</span>
+        <span id="audio-status">Music: ON 💕</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Centered Application Frame -->
+  <main class="app-container">
+    
+    <!-- Floating Kawaii Proposal Card -->
+    <article class="main-card" id="main-card">
+      
+      <!-- Top Decorative Ribbon Badge -->
+      <div class="card-ribbon">
+        <span>FOR MY HEART TAYEBA 💌</span>
+      </div>
+
+      <!-- Kawaii Kitten SVG Illustration -->
+      <div class="kitten-container" id="kitten-container" title="Click me for purrs! 🐾">
+        <svg id="kitten-svg" class="kitten-svg" viewBox="0 0 150 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Heart Cushion Base -->
+          <path d="M75 142 C40 120, 15 95, 20 70 C25 45, 55 45, 75 65 C95 45, 125 45, 130 70 C135 95, 110 120, 75 142 Z" fill="#FF85C0" opacity="0.35"/>
+          
+          <!-- Kitten Body -->
+          <ellipse cx="75" cy="102" rx="36" ry="28" fill="#FFFFFF" stroke="#5A1846" stroke-width="3"/>
+          <ellipse cx="75" cy="100" rx="30" ry="22" fill="#FFF5FA"/>
+
+          <!-- Kitten Ears -->
+          <g class="kitten-ear-left">
+            <path d="M42 55 L30 25 L58 45 Z" fill="#FFFFFF" stroke="#5A1846" stroke-width="3" stroke-linejoin="round"/>
+            <path d="M43 52 L34 30 L55 45 Z" fill="#FFB0DC"/>
+          </g>
+          <g class="kitten-ear-right">
+            <path d="M108 55 L120 25 L92 45 Z" fill="#FFFFFF" stroke="#5A1846" stroke-width="3" stroke-linejoin="round"/>
+            <path d="M107 52 L116 30 L95 45 Z" fill="#FFB0DC"/>
+          </g>
+
+          <!-- Kitten Head -->
+          <ellipse cx="75" cy="62" rx="42" ry="34" fill="#FFFFFF" stroke="#5A1846" stroke-width="3"/>
+          
+          <!-- Blushing Cheeks -->
+          <ellipse cx="50" cy="72" rx="7" ry="4" fill="#FF85C0" opacity="0.8"/>
+          <ellipse cx="100" cy="72" rx="7" ry="4" fill="#FF85C0" opacity="0.8"/>
+
+          <!-- Kitten Eyes -->
+          <g class="kitten-eye">
+            <ellipse cx="56" cy="62" rx="5" ry="7" fill="#5A1846"/>
+            <circle cx="58" cy="60" r="2" fill="#FFFFFF"/>
+          </g>
+          <g class="kitten-eye">
+            <ellipse cx="94" cy="62" rx="5" ry="7" fill="#5A1846"/>
+            <circle cx="96" cy="60" r="2" fill="#FFFFFF"/>
+          </g>
+
+          <!-- Nose & Mouth -->
+          <polygon points="75,69 72,66 78,66" fill="#FF2E92"/>
+          <path d="M72 71 Q75 74 75 71 Q75 74 78 71" stroke="#5A1846" stroke-width="2" stroke-linecap="round" fill="none"/>
+
+          <!-- Whiskers -->
+          <line x1="32" y1="64" x2="16" y2="61" stroke="#5A1846" stroke-width="2" stroke-linecap="round"/>
+          <line x1="32" y1="68" x2="18" y2="72" stroke="#5A1846" stroke-width="2" stroke-linecap="round"/>
+          <line x1="118" y1="64" x2="134" y2="61" stroke="#5A1846" stroke-width="2" stroke-linecap="round"/>
+          <line x1="118" y1="68" x2="132" y2="72" stroke="#5A1846" stroke-width="2" stroke-linecap="round"/>
+
+          <!-- Kitten Paws -->
+          <ellipse cx="60" cy="118" rx="8" ry="6" fill="#FFFFFF" stroke="#5A1846" stroke-width="2.5"/>
+          <ellipse cx="90" cy="118" rx="8" ry="6" fill="#FFFFFF" stroke="#5A1846" stroke-width="2.5"/>
+
+          <!-- Tail -->
+          <path class="kitten-tail" d="M108 108 C125 110, 135 90, 128 75" stroke="#5A1846" stroke-width="4" stroke-linecap="round" fill="none"/>
+        </svg>
+      </div>
+
+      <!-- Proposal Question Heading -->
+      <h1 class="main-title">
+        PAKHI, Will you go out with me?
+      </h1>
+
+      <!-- Dynamic Message Area for NO button feedback -->
+      <div class="message-container" id="message-container">
+        <span class="no-message" id="no-msg-text">Choose wisely Jaan 💖</span>
+      </div>
+
+      <!-- Action Buttons Container -->
+      <div class="button-container" id="button-container">
+        <button class="btn btn-yes" id="btn-yes">
+          YES 💕
+        </button>
+        <button class="btn btn-no" id="btn-no">
+          NO
+        </button>
+      </div>
+
+    </article>
+
+  </main>
+
+  <!-- Success Popup Modal -->
+  <div class="modal-overlay" id="success-modal">
+    <div class="modal-card">
+      
+      <!-- Celebratory Kitten Illustration -->
+      <div style="width: 120px; height: 110px;">
+        <svg viewBox="0 0 150 150" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: 100%;">
+          <ellipse cx="75" cy="62" rx="42" ry="34" fill="#FFFFFF" stroke="#5A1846" stroke-width="3"/>
+          <ellipse cx="50" cy="72" rx="7" ry="4" fill="#FF85C0"/>
+          <ellipse cx="100" cy="72" rx="7" ry="4" fill="#FF85C0"/>
+          <!-- Happy Arc Eyes -->
+          <path d="M50 63 Q56 55 62 63" stroke="#5A1846" stroke-width="3" stroke-linecap="round" fill="none"/>
+          <path d="M88 63 Q94 55 100 63" stroke="#5A1846" stroke-width="3" stroke-linecap="round" fill="none"/>
+          <polygon points="75,69 72,66 78,66" fill="#FF2E92"/>
+          <!-- Big Heart in Paws -->
+          <path d="M75 115 C55 95, 40 80, 45 65 C50 50, 70 50, 75 62 C80 50, 100 50, 105 65 C110 80, 95 95, 75 115 Z" fill="#FF2E92" stroke="#FFFFFF" stroke-width="2"/>
+        </svg>
+      </div>
+
+      <h2 class="modal-title">YAYYYYY TAYEBA!! ❤️</h2>
+      <p class="modal-text">
+        Tayeba, you just made me the happiest person alive.<br/>
+        I promise to make lots of beautiful memories together 🌸
+      </p>
+
+      <div class="modal-buttons">
+        <button class="btn btn-hug" id="btn-hug">
+          Hug Me 🤍
+        </button>
+        <button class="btn btn-close" id="btn-close-modal">
+          Close
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Animated "I LOVE YOU TAYEBA ❤️" Banner for Hug Action -->
+  <div class="hug-banner" id="hug-banner">
+    <div class="hug-banner-text">I LOVE YOU TAYEBA ❤️</div>
+  </div>
+
+  <!-- Application Script -->
+  <script src="/script.js"></script>
+</body>
+</html>

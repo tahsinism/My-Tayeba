@@ -1,0 +1,6 @@
+{
+  "name": "Kawaii Romantic Proposal",
+  "description": "A retro pixel-art kawaii Nintendo DS style interactive love proposal website with cute animations, sound effects, and floating background elements.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
