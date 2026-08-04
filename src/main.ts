@@ -1,24 +1,51 @@
 /**
  * ================================================================
- * KAWAII ROMANTIC PROPOSAL - SCRIPT.JS
+ * KAWAII ROMANTIC PROPOSAL - MAIN.TS
  * Complete interactive logic, Web Audio synthesizer, custom animations,
- * particle systems, and responsive touch controls.
+ * particle systems, and responsive touch controls written in TypeScript.
  * ================================================================
  */
 
-function initApp() {
+interface RomanticMelodyStep {
+  melody: number;
+  bass: number;
+}
+
+interface CursorParticle {
+  x: number;
+  y: number;
+  size: number;
+  alpha: number;
+  vx: number;
+  vy: number;
+  color: string;
+}
+
+interface CelebrationParticle {
+  x: number;
+  y: number;
+  size: number;
+  color: string;
+  vx: number;
+  vy: number;
+  gravity: number;
+  alpha: number;
+  type: 'heart' | 'circle';
+}
+
+function initApp(): void {
   // --------------------------------------------------------------
   // 1. STATE & CONSTANTS
   // --------------------------------------------------------------
   let noClickCount = 0;
   let isAudioPlaying = true;
-  let audioContext = null;
-  let musicInterval = null;
+  let audioContext: AudioContext | null = null;
+  let musicInterval: ReturnType<typeof setInterval> | null = null;
   let isRunawayActive = false;
   let isCelebrated = false;
 
   // NO Button Message List
-  const noMessages = [
+  const noMessages: string[] = [
     "Are you sure, Tayeba? 🥺",
     "Really, Tayeba?",
     "Think again, my heart...",
@@ -43,31 +70,44 @@ function initApp() {
   ];
 
   // YES Scale Progression Steps - rapid visible expansion on every NO click
-  const yesScales = [
+  const yesScales: number[] = [
     1, 1.35, 1.8, 2.35, 3.0, 3.8, 4.8, 6.0, 7.5, 9.2, 11.2, 13.5, 16.0
   ];
 
   // DOM Element References
-  const btnYes = document.getElementById('btn-yes');
-  const btnNo = document.getElementById('btn-no');
-  const noMsgText = document.getElementById('no-msg-text');
-  const audioBtn = document.getElementById('audio-btn');
-  const audioStatus = document.getElementById('audio-status');
-  const kittenContainer = document.getElementById('kitten-container');
-  const kittenSvg = document.getElementById('kitten-svg');
-  const successModal = document.getElementById('success-modal');
-  const btnHug = document.getElementById('btn-hug');
-  const btnCloseModal = document.getElementById('btn-close-modal');
-  const hugBanner = document.getElementById('hug-banner');
-  const bgContainer = document.getElementById('bg-container');
-  const particleCanvas = document.getElementById('particle-canvas');
-  const cursorCanvas = document.getElementById('cursor-canvas');
+  const btnYes = document.getElementById('btn-yes') as HTMLButtonElement | null;
+  const btnNo = document.getElementById('btn-no') as HTMLButtonElement | null;
+  const noMsgText = document.getElementById('no-msg-text') as HTMLElement | null;
+  const audioBtn = document.getElementById('audio-btn') as HTMLButtonElement | null;
+  const audioStatus = document.getElementById('audio-status') as HTMLElement | null;
+  const kittenContainer = document.getElementById('kitten-container') as HTMLElement | null;
+  const kittenSvg = document.getElementById('kitten-svg') as SVGSVGElement | HTMLElement | null;
+  const successModal = document.getElementById('success-modal') as HTMLElement | null;
+  const btnHug = document.getElementById('btn-hug') as HTMLButtonElement | null;
+  const btnCloseModal = document.getElementById('btn-close-modal') as HTMLButtonElement | null;
+  const hugBanner = document.getElementById('hug-banner') as HTMLElement | null;
+  const bgContainer = document.getElementById('bg-container') as HTMLElement | null;
+  const particleCanvas = document.getElementById('particle-canvas') as HTMLCanvasElement | null;
+  const cursorCanvas = document.getElementById('cursor-canvas') as HTMLCanvasElement | null;
+
+  if (!btnYes || !btnNo || !noMsgText || !audioBtn || !audioStatus || !kittenContainer || 
+      !kittenSvg || !successModal || !btnHug || !btnCloseModal || !hugBanner || 
+      !bgContainer || !particleCanvas || !cursorCanvas) {
+    console.warn("One or more required DOM elements were not found.");
+    return;
+  }
 
   // Setup Canvases
   const pCtx = particleCanvas.getContext('2d');
   const cCtx = cursorCanvas.getContext('2d');
 
-  function resizeCanvases() {
+  if (!pCtx || !cCtx) {
+    console.warn("Could not get 2D rendering context for canvases.");
+    return;
+  }
+
+  function resizeCanvases(): void {
+    if (!particleCanvas || !cursorCanvas) return;
     particleCanvas.width = window.innerWidth;
     particleCanvas.height = window.innerHeight;
     cursorCanvas.width = window.innerWidth;
@@ -79,9 +119,9 @@ function initApp() {
   // --------------------------------------------------------------
   // 2. WEB AUDIO SYNTHESIZER (LO-FI MELODY & SOUND EFFECTS)
   // --------------------------------------------------------------
-  function initAudioContext() {
+  function initAudioContext(): void {
     if (!audioContext) {
-      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       audioContext = new AudioCtx();
     }
     if (audioContext.state === 'suspended') {
@@ -90,7 +130,7 @@ function initApp() {
   }
 
   // Cute Pop / Click Sound FX
-  function playPopSound(freq = 520, duration = 0.1) {
+  function playPopSound(freq: number = 520, duration: number = 0.1): void {
     initAudioContext();
     if (!audioContext) return;
 
@@ -112,7 +152,7 @@ function initApp() {
   }
 
   // Purr / Meow Sound FX for Kitten
-  function playKittenSound() {
+  function playKittenSound(): void {
     initAudioContext();
     if (!audioContext) return;
 
@@ -136,12 +176,13 @@ function initApp() {
   }
 
   // Victory Celebration Chime
-  function playVictorySound() {
+  function playVictorySound(): void {
     initAudioContext();
     if (!audioContext) return;
 
     const notes = [523.25, 659.25, 783.99, 1046.50, 1318.51]; // C5, E5, G5, C6, E6
     notes.forEach((freq, idx) => {
+      if (!audioContext) return;
       const now = audioContext.currentTime + idx * 0.12;
       const osc = audioContext.createOscillator();
       const gain = audioContext.createGain();
@@ -160,14 +201,13 @@ function initApp() {
     });
   }
 
-  // Procedural Romantic Synthesizer Melody Loop (Increased Volume & Sweet Romantic Tune)
-  function startLoFiMusic() {
+  // Procedural Romantic Synthesizer Melody Loop
+  function startLoFiMusic(): void {
     initAudioContext();
     if (!audioContext) return;
     if (musicInterval) return; // Prevent duplicate loops
 
-    // Sweet romantic melody sequence (Notes in Hz: E5, G5, A5, C6, B5, G5, E5, D5, C5...)
-    const romanticMelody = [
+    const romanticMelody: RomanticMelodyStep[] = [
       { melody: 659.25, bass: 261.63 }, // E5, C4
       { melody: 783.99, bass: 329.63 }, // G5, E4
       { melody: 880.00, bass: 392.00 }, // A5, G4
@@ -189,12 +229,12 @@ function initApp() {
     let step = 0;
 
     musicInterval = setInterval(() => {
-      if (!isAudioPlaying) return;
+      if (!isAudioPlaying || !audioContext) return;
 
       const now = audioContext.currentTime;
       const currentStep = romanticMelody[step % romanticMelody.length];
 
-      // Play Melody Note (High register, rich bell/piano sine+triangle synth with high volume)
+      // Play Melody Note
       const mOsc1 = audioContext.createOscillator();
       const mOsc2 = audioContext.createOscillator();
       const mGain = audioContext.createGain();
@@ -205,7 +245,6 @@ function initApp() {
       mOsc1.frequency.setValueAtTime(currentStep.melody, now);
       mOsc2.frequency.setValueAtTime(currentStep.melody * 1.002, now); // subtle warmth chorus
 
-      // Increased volume (0.28 peak gain)
       mGain.gain.setValueAtTime(0.28, now);
       mGain.gain.exponentialRampToValueAtTime(0.001, now + 0.85);
 
@@ -240,7 +279,7 @@ function initApp() {
     }, 420);
   }
 
-  function stopLoFiMusic() {
+  function stopLoFiMusic(): void {
     if (musicInterval) {
       clearInterval(musicInterval);
       musicInterval = null;
@@ -250,8 +289,8 @@ function initApp() {
   // Audio Toggle Button Event
   audioBtn.style.borderColor = "#FF2E92";
   
-  audioBtn.addEventListener('click', (e) => {
-    e.stopPropagation(); // prevent global interaction trigger loop
+  audioBtn.addEventListener('click', (e: MouseEvent) => {
+    e.stopPropagation();
     initAudioContext();
     isAudioPlaying = !isAudioPlaying;
 
@@ -268,8 +307,8 @@ function initApp() {
     }
   });
 
-  // Auto-Start Music on First User Gesture (Bypasses Browser Autoplay Lock)
-  function handleFirstUserInteraction() {
+  // Auto-Start Music on First User Gesture
+  function handleFirstUserInteraction(): void {
     if (isAudioPlaying) {
       initAudioContext();
       startLoFiMusic();
@@ -288,15 +327,15 @@ function initApp() {
   // --------------------------------------------------------------
   // 3. CURSOR TRAIL & PARALLAX EFFECT
   // --------------------------------------------------------------
-  const cursorParticles = [];
+  const cursorParticles: CursorParticle[] = [];
   const heartPath = new Path2D('M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z');
 
-  window.addEventListener('mousemove', (e) => {
+  window.addEventListener('mousemove', (e: MouseEvent) => {
     // Parallax background movement
     const moveX = (e.clientX - window.innerWidth / 2) * 0.015;
     const moveY = (e.clientY - window.innerHeight / 2) * 0.015;
 
-    document.querySelectorAll('.parallax-layer').forEach((layer, idx) => {
+    document.querySelectorAll<HTMLElement>('.parallax-layer').forEach((layer, idx) => {
       const speed = (idx + 1) * 0.4;
       layer.style.transform = `translate(${moveX * speed}px, ${moveY * speed}px)`;
     });
@@ -325,7 +364,8 @@ function initApp() {
   });
 
   // Draw Cursor Trail Frame
-  function animateCursorTrail() {
+  function animateCursorTrail(): void {
+    if (!cCtx || !cursorCanvas) return;
     cCtx.clearRect(0, 0, cursorCanvas.width, cursorCanvas.height);
 
     for (let i = cursorParticles.length - 1; i >= 0; i--) {
@@ -355,7 +395,7 @@ function initApp() {
   // --------------------------------------------------------------
   // 4. MAIN INTERACTION (NO BUTTON & YES GROWTH)
   // --------------------------------------------------------------
-  btnNo.addEventListener('click', (e) => {
+  btnNo.addEventListener('click', (e: MouseEvent) => {
     e.stopPropagation();
     noClickCount++;
 
@@ -378,7 +418,7 @@ function initApp() {
 
     // Scale YES Button
     const scale = noClickCount < yesScales.length ? yesScales[noClickCount] : yesScales[yesScales.length - 1] + (noClickCount - yesScales.length) * 2.0;
-    btnYes.style.setProperty('--yes-scale', scale);
+    btnYes.style.setProperty('--yes-scale', scale.toString());
     btnYes.style.transform = `scale(${scale})`;
 
     if (noClickCount >= 3) {
@@ -395,8 +435,8 @@ function initApp() {
     }
   });
 
-  // Move NO Button to Random Viewport Position (Mobile-friendly safe bounds)
-  function moveNoButton() {
+  // Move NO Button to Random Viewport Position
+  function moveNoButton(): void {
     const padX = Math.min(24, window.innerWidth * 0.05);
     const padY = Math.min(60, window.innerHeight * 0.1);
     const viewWidth = window.visualViewport ? window.visualViewport.width : window.innerWidth;
@@ -415,7 +455,7 @@ function initApp() {
   }
 
   // Touch device runaway support
-  btnNo.addEventListener('touchstart', (e) => {
+  btnNo.addEventListener('touchstart', (e: TouchEvent) => {
     if (isRunawayActive) {
       e.preventDefault();
       moveNoButton();
@@ -438,7 +478,8 @@ function initApp() {
     spawnHeartAboveKitten();
   });
 
-  function spawnHeartAboveKitten() {
+  function spawnHeartAboveKitten(): void {
+    if (!kittenContainer) return;
     const rect = kittenContainer.getBoundingClientRect();
     const heart = document.createElement('div');
     heart.innerText = '💖';
@@ -485,9 +526,9 @@ function initApp() {
   });
 
   // Particle System
-  const celebrationParticles = [];
+  const celebrationParticles: CelebrationParticle[] = [];
 
-  function launchCelebrationParticles() {
+  function launchCelebrationParticles(): void {
     const count = 120;
     const colors = ['#FF2E92', '#FF85C0', '#FFD6EC', '#FFD700', '#FFFFFF', '#FF60B2'];
 
@@ -508,7 +549,8 @@ function initApp() {
     animateParticles();
   }
 
-  function animateParticles() {
+  function animateParticles(): void {
+    if (!pCtx || !particleCanvas) return;
     pCtx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
 
     for (let i = celebrationParticles.length - 1; i >= 0; i--) {
