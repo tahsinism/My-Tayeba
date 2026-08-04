@@ -42,9 +42,9 @@ function initApp() {
     "Last warning Tayeba 😤❤️"
   ];
 
-  // YES Scale Progression Steps
+  // YES Scale Progression Steps - rapid visible expansion on every NO click
   const yesScales = [
-    1, 1.15, 1.35, 1.6, 2.0, 2.6, 3.2, 4.0, 5.0, 6.2, 7.5, 9.0, 11.0
+    1, 1.35, 1.8, 2.35, 3.0, 3.8, 4.8, 6.0, 7.5, 9.2, 11.2, 13.5, 16.0
   ];
 
   // DOM Element References
@@ -377,13 +377,12 @@ function initApp() {
     }, 150);
 
     // Scale YES Button
-    const scale = noClickCount < yesScales.length ? yesScales[noClickCount] : yesScales[yesScales.length - 1] + (noClickCount - yesScales.length) * 1.5;
+    const scale = noClickCount < yesScales.length ? yesScales[noClickCount] : yesScales[yesScales.length - 1] + (noClickCount - yesScales.length) * 2.0;
+    btnYes.style.setProperty('--yes-scale', scale);
     btnYes.style.transform = `scale(${scale})`;
 
-    // Around 12 clicks, make YES take huge prominence
-    if (noClickCount >= 12) {
-      btnYes.style.width = '100%';
-      btnYes.style.maxWidth = '360px';
+    if (noClickCount >= 3) {
+      btnYes.style.zIndex = '100';
     }
 
     // After 20 clicks, enable runaway mode
